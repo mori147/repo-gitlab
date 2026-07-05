@@ -1,12 +1,9 @@
 import subprocess
 
-import config
-
-
-def switch(path):
+def switch(path, tag):
     try:
         result = subprocess.run(
-            ["/usr/bin/git", "checkout", "-b", config.SELF_TAG],
+            ["/usr/bin/git", "checkout", "-b", tag],
             cwd=path,
             capture_output=True,
             text=True,
@@ -22,7 +19,7 @@ def switch(path):
 
     try:
         result = subprocess.run(
-            ["/usr/bin/git", "push", "-f", "gitlab", config.SELF_TAG],
+            ["/usr/bin/git", "push", "-f", "gitlab", tag],
             cwd=path,
             capture_output=True,
             text=True,

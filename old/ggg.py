@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 
-import config
+from config import s20
 
 PROJECT_PATH = config.PROJECT_PATH
 MANIFEST_PATH = config.MANIFEST_PATH

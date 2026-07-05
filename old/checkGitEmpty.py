@@ -1,7 +1,7 @@
 import subprocess
 import xml.etree.ElementTree as ET
 import gitlab
-import config
+from config import s20
 import os
 
 # GitLab 配置

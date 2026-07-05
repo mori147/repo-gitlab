@@ -74,7 +74,8 @@ def fetch(path, name, remote):
         encoding="utf-8",
         env=env
     )
-    print("[fetch start]")
+
+    print("[fetch start]", name)
     # 实时迭代输出
     if 1 and process.stdout:
         for line in process.stdout:

@@ -4,7 +4,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 # import gitlab
 import os
-import config
+from config import s20
 
 MANIFEST_PATH = config.MANIFEST_PATH
 PROJECT_PATH = config.PROJECT_PATH

@@ -1,17 +1,17 @@
 import xml.etree.ElementTree as ET
 import gitlab
-import config
+import config.lineageos20 as configure
 import os
 
 # GitLab 配置
-GITLAB_URL = config.GITLAB_URL
-PRIVATE_TOKEN = config.PRIVATE_TOKEN  # + '456'
-GROUP_ID = config.GROUP_ID
+GITLAB_URL = configure.GITLAB_URL
+PRIVATE_TOKEN = configure.PRIVATE_TOKEN  # + '456'
+GROUP_ID = configure.GROUP_ID
 
 # contrib
 
 
-MANIFEST_PATH = config.MANIFEST_PATH
+MANIFEST_PATH = configure.pixel
 
 # 初始化 GitLab 实例
 gl = gitlab.Gitlab(GITLAB_URL, private_token=PRIVATE_TOKEN)
@@ -34,9 +34,10 @@ def check_subgroup(parent_group, group_name):
     new_subgroup = gl.groups.create({
         'name': group_name,
         'path': group_name,
-        'parent_id': parent_group.id,        'visibility': 'internal'
+        'parent_id': parent_group.id, 'visibility': 'internal'
     })
     return new_subgroup
+
 
 def get_or_create_subgroup(gl, parent_group, group_name):
     """获取或创建一个子组 (使用全路径确保精确嵌套)"""
@@ -58,7 +59,7 @@ def get_or_create_subgroup(gl, parent_group, group_name):
         return target_group
 
     # 如果没找到，创建一个新的子组
-    print(f"Creating subgroup: {group_name} under {parent_group.full_path} parent_id", parent_group.id,)
+    print(f"Creating subgroup: {group_name} under {parent_group.full_path} parent_id", parent_group.id, )
     return check_subgroup(parent_group, group_name)
 
 
@@ -108,8 +109,9 @@ def check_root_group(gl, root_name):
 
     if target_group:
         # 检查并修复可见性
-        if target_group.visibility != 'internal':
+        if target_group.visibility != 'internal' and target_group.visibility != 'public':
             print(f"Updating root group visibility to internal: {target_group.full_path}")
+            # print(f"Updating root group current visibility: {target_group.visibility}")
             target_group.visibility = 'internal'
             target_group.save()
         return target_group
@@ -157,7 +159,7 @@ def deal(project):
         p_obj = gl.projects.get(name)
         # 如果存在，检查并完善可见性属性
         changed = False
-        if p_obj.visibility != 'internal':
+        if p_obj.visibility != 'internal' and p_obj.visibility != 'public':
             print(f"快速修复存量项目可见性: {p_obj.path_with_namespace}")
             p_obj.visibility = 'internal'
             changed = True

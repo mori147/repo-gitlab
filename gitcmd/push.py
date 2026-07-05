@@ -29,7 +29,7 @@ def push3(path):
     print("push down")
 
 
-def push(path, remote):
+def push(path, remote, tag):
     print("********** push **************", path, remote)
     # 复制当前环境，并强制关闭 Python 的输出缓存
     env = os.environ.copy()
@@ -53,7 +53,7 @@ def push(path, remote):
     aaa.wait()
     print("********** push **************")
     if remote != "aosp":
-        switch(path)
+        switch(path, tag)
     bbb = subprocess.Popen(
         '/usr/bin/git push gitlab --tags -f',
         shell=True,

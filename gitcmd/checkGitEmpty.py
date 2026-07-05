@@ -2,21 +2,23 @@ import subprocess
 import traceback
 import xml.etree.ElementTree as ET
 import gitlab
-import config
+import config.lineageos20 as configure
 import os
 
 # GitLab 配置
-GITLAB_URL = config.GITLAB_URL
-PRIVATE_TOKEN = config.PRIVATE_TOKEN
+GITLAB_URL = configure.GITLAB_URL
+PRIVATE_TOKEN = configure.PRIVATE_TOKEN
 # 模仿 createGitProject.py 的逻辑
-MANIFEST_PATH = config.MANIFEST_PATH
+MANIFEST_PATH = configure.MANIFEST_PATH
 
 # 初始化 GitLab 实例
 gl = gitlab.Gitlab(GITLAB_URL, private_token=PRIVATE_TOKEN)
 
 
-def is_project_empty(gl_project, remote):
+def is_project_empty(name, remote):
     """检查项目是否为空（没有提交记录）"""
+    # 尝试获取项目对象
+    gl_project = gl.projects.get(name)
     try:
         # 获取最近的一个提交
         commits = gl_project.commits.list(page=1, per_page=1)
@@ -28,7 +30,6 @@ def is_project_empty(gl_project, remote):
     except Exception:
         # 如果无法获取提交，通常视为为空
         return True
-
 
 def parse_and_check(mmm):
     print(f"正在解析清单文件: {mmm}")
@@ -63,11 +64,8 @@ def parse_and_check(mmm):
 
         # 检查项目状态
         try:
-            # 尝试获取项目对象
-            p_obj = gl.projects.get(name)
-
             # 检查项目是否为空
-            if is_project_empty(p_obj, remote):
+            if is_project_empty(name, remote):
                 print(f"[EMPTY] 项目已创建但无内容: {name}")
                 empty_count += 1
                 empty_projects.append(path + "###" + name)
@@ -113,10 +111,10 @@ def parse_and_check(mmm):
         for p in empty_projects:
             print(f"  - {p}")
 
-    with open("./log/empty_projects.txt", 'w') as f:
+    with open("../log/empty_projects.txt", 'w') as f:
         f.write('\n'.join(empty_projects))
 
-    with open("./log/missing_projects.txt", 'w') as f:
+    with open("../log/missing_projects.txt", 'w') as f:
         f.write('\n'.join(missing_projects))
 
     if missing_projects:

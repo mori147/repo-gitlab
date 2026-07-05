@@ -1,7 +1,7 @@
 import subprocess
 import os
 import xml.etree.ElementTree as ET
-import config
+from config import s20
 import shutil
 import stat
 from concurrent.futures import ThreadPoolExecutor

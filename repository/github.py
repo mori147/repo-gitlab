@@ -1,6 +1,6 @@
 from parse import parse
-import config
-import subprocess, os
+from config import s20
+import subprocess
 from gitcmd.remote import add
 from gitcmd.push import push
 from gitcmd.fetch import fetch, __setfetchUrl__

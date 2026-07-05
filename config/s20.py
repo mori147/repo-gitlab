@@ -13,7 +13,7 @@ MANIFEST_PATH = PROJECT_PATH + "/.repo/manifests/default.xml"
 # local_manifests/roomservice.xml
 roomservice = PROJECT_PATH + "/.repo/local_manifests/roomservice.xml"
 REPO_OBJECTS_PATH = os.path.join(PROJECT_PATH, ".repo/projects")
-OLD_BAK_PATH = os.path.join(_disk_big, "old")
+OLD_BAK_PATH = os.path.join(_disk_big, "../old")
 WORK_BAK_PATH = os.path.join(_disk_big, "work")
 
 SELF_TAG = "hxos16.0.1"

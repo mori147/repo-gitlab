@@ -1,9 +1,8 @@
 from parse import parse
-import config
-import subprocess, os
+import subprocess
 from gitcmd.remote import add
 from gitcmd.push import push
-from gitcmd.fetch import fetch, __setfetchUrl__
+from gitcmd.fetch import fetch
 from gitcmd.lfs import change
 import os
 import socket

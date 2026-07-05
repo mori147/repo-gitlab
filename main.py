@@ -1,10 +1,7 @@
 import json
-import os
 import subprocess
-from dataclasses import dataclass
-from typing import List
 
-import config
+from config import s20
 
 PROJECT_PATH = config.PROJECT_PATH
 MANIFEST_PATH = config.MANIFEST_PATH
