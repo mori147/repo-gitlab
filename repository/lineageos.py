@@ -10,6 +10,7 @@ import socket
 print(os.getcwd())
 print(socket.gethostname())
 
+import config.lineageos20 as configure
 
 def status(ppp):
     result = subprocess.run(

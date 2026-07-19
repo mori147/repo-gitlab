@@ -11,6 +11,13 @@ from gitlab import GitlabGetError
 
 import config.lineageos20 as configure
 
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parent.parent
+print("ROOT", ROOT)
+sys.path.insert(0, str(ROOT))
+
 revisions = {}
 baseurl = {
     "aosp": "https://android.googlesource.com/",
@@ -18,21 +25,6 @@ baseurl = {
 }
 # 初始化 GitLab 实例
 gl = gitlab.Gitlab(configure.GITLAB_URL, private_token=configure.PRIVATE_TOKEN)
-
-
-def init(xml_path):
-    tree = ET.parse(xml_path)
-    root = tree.getroot()
-    for project in root.findall('remote'):
-        name = project.get('name')
-        revision = project.get('revision')
-        if revision is not None:
-            revisions[name] = revision
-    for project in root.findall('default'):
-        name = project.get('remote')
-        revision = project.get('revision')
-        if revision is not None:
-            revisions[name] = revision
 
 
 def parse(xml_path, cb):
@@ -48,30 +40,23 @@ def parse(xml_path, cb):
         if "notdefault" in groups: continue  # 如果在，则跳过当前项目
         path = project.get('path')
         name = project.get('name')
-        remote = project.get('remote', "github")
-        groups = project.get('groups')
-        revision = project.get('revision', revisions[remote])
         ppp = os.path.join(configure.PROJECT_PATH, path)
-        try:
-            if 1 and remote == "aosp":
-                cb(ppp, revision)
-            if 0 and remote == "github":
-                if not same_last_commit(name, revision, ppp):
-                    print(ppp)
-                    with open("/tmp/aosp/log/change.log", "a", encoding="utf-8") as f:
-                        f.write(ppp + "\n")
-        except GitlabGetError as e:
-            if e.response_code == 404:
-                add(ppp, baseurl[remote] + name, remote)
+        if same_last_commit(name):
+            print(ppp)
+            with open("/tmp/aosp/log/change.log", "a", encoding="utf-8") as f:
+                f.write(ppp + "\n")
 
 
-def same_last_commit(name, branch, path):
-    if not branch.startswith("refs/heads/"):
-        branch = branch.replace("refs/heads/", "")
-    project = gl.projects.get(name)
-    b1 = project.branches.get(configure.SELF_TAG)
-    b2 = project.branches.get(branch)
-    return b1.commit['id'] != b2.commit['id']
+def same_last_commit(name):
+    try:
+        project = gl.projects.get(name)
+        b1 = project.branches.get("hxos16.0.1")
+        b2 = project.branches.get("hxos16.0.note10")
+        return b1.commit['id'] != b2.commit['id']
+    except GitlabGetError as e:
+        if e.response_code == 404:
+            print(404, name)
+
 
 def re_commit(tag_commit, revision, path):
     # 1. 用 tag_commit 获取文件列表
@@ -233,6 +218,4 @@ def aosp(path, revision):
 
 
 if __name__ == "__main__":
-    init(configure.MANIFEST_PATH)
-    # parse(configure.LINEAGE, aosp)
-    parse(configure.MANIFEST_PATH, aosp)
+    parse(ROOT.joinpath("manifests/roomservice.xml"), aosp)

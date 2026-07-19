@@ -70,4 +70,21 @@ def push(path, remote, tag):
             # flush=True 确保这一行立刻被刷新到你的控制台上
             print(line, end="", flush=True)
     bbb.wait()
+    if tag:
+        ccc = subprocess.Popen(
+            f'/usr/bin/git push gitlab {tag}',
+            shell=True,
+            cwd=path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            env=env,  # 传入新环境变量
+        )
+        # 实时迭代输出
+        if 1 and ccc.stdout:
+            for line in ccc.stdout:
+                # flush=True 确保这一行立刻被刷新到你的控制台上
+                print(line, end="", flush=True)
+        ccc.wait()
     print("【gitlab】 push down")

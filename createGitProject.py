@@ -11,7 +11,7 @@ GROUP_ID = configure.GROUP_ID
 # contrib
 
 
-MANIFEST_PATH = configure.pixel
+MANIFEST_PATH = "roomservice.xml"
 
 # 初始化 GitLab 实例
 gl = gitlab.Gitlab(GITLAB_URL, private_token=PRIVATE_TOKEN)
